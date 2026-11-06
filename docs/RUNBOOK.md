@@ -173,9 +173,6 @@ uv run fastapi run app/main.py --host 127.0.0.1 --port 8000
 Build before starting FastAPI: static-file mounting is determined when the app
 is imported. The API and poller are separate processes. For a remote deployment,
 use a process supervisor and private network access or properly configured HTTPS.
-The [optional VM notes](oracle-free-server-setup.md) include an infrastructure
-plan; their container examples require container files that are not bundled in
-this checkout.
 
 Run one poller per inbox. Avoid manual `/api/poll` checks while a background
 worker is active. PostgreSQL claims reduce duplicate processing, but do not

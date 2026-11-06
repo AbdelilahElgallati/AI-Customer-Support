@@ -31,4 +31,4 @@ coverage/
 .DS_Store
 Thumbs.db
 
-docs\oracle-free-server-setup.md
+/docs/oracle-free-server-setup.md
