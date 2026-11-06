@@ -1,0 +1,27 @@
+flowchart LR
+    customer["CUSTOMER<br/>A product or policy question"]
+    gmail["GMAIL INTAKE<br/>OAuth 2.0 · inbox · threads"]
+    worker["PYTHON WORKER<br/>Poll · claim · guard<br/>Save conversation context"]
+    ai["DECISION PIPELINE<br/>1. Classify the request<br/>2. Read knowledge + draft<br/>3. Apply Python rules"]
+    outcome["GMAIL DELIVERY<br/>Reply OR acknowledgement<br/>Human handoff label as needed"]
+    groq["GROQ / PYDANTIC AI<br/>Typed outputs · tools<br/>Bounded request recovery"]
+    db[("SUPABASE / POSTGRESQL<br/>Events · tickets · messages<br/>Knowledge articles")]
+    team["SUPPORT TEAM<br/>Review exceptions<br/>Maintain approved knowledge"]
+    dashboard["REACT WORKSPACE<br/>Activity · conversations<br/>Knowledge editor"]
+    api["FASTAPI<br/>Authenticated /api routes<br/>Built dashboard assets"]
+
+    customer --> gmail --> worker --> ai --> outcome
+    team --> dashboard -->|"HTTP Basic"| api
+    api -->|"read support data<br/>update articles"| db
+    worker -->|"processing records"| db
+    ai -->|"knowledge reads<br/>decision results"| db
+    ai <-->|"model requests"| groq
+    api -. "manual inbox check" .-> worker
+    classDef external fill:#edf1e6,stroke:#a9b89a,color:#314a35,rx:10,ry:10;
+    classDef primary fill:#254e3c,stroke:#254e3c,color:#f7f9f0,rx:10,ry:10;
+    classDef storage fill:#f9f1df,stroke:#cbbd98,color:#65522a;
+    classDef neutral fill:#ffffff,stroke:#ccd6c7,color:#304436,rx:8,ry:8;
+    class customer,gmail,groq,team,outcome external;
+    class dashboard,ai primary;
+    class db storage;
+    class api,worker neutral;

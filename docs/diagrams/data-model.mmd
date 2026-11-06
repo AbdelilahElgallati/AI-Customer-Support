@@ -1,0 +1,40 @@
+erDiagram
+    EVENTS {
+      bigint id PK
+      text gmail_message_id UK
+      text status "processing / processed / skipped / failed"
+      int attempts
+      text error
+      jsonb result
+      timestamptz created_at
+      timestamptz processed_at
+    }
+    TICKETS {
+      bigint id PK
+      text gmail_thread_id UK
+      text customer_email
+      text subject
+      text category
+      text status "open / answered / escalated"
+      text proposed_action
+      timestamptz created_at
+      timestamptz updated_at
+    }
+    MESSAGES {
+      bigint id PK
+      bigint ticket_id FK
+      text gmail_message_id UK
+      text direction "in / out"
+      text from_address
+      text body
+      timestamptz created_at
+    }
+    KNOWLEDGE_BASE {
+      bigint id PK
+      text section "unique together with title"
+      text title
+      text content
+      timestamptz updated_at
+    }
+    TICKETS ||--o{ MESSAGES : "contains"
+    EVENTS o|..o| MESSAGES : "logical link by gmail_message_id"

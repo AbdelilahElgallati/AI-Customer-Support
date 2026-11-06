@@ -1,0 +1,32 @@
+flowchart TD
+    inbox(["Gmail inbox: new unlabelled message"])
+    claim["Claim unique Gmail message ID<br/>Skip an existing active/completed claim"]
+    guards{"Self-sent, automated, bulk/list,<br/>or a human-owned thread?"}
+    skipped["Record skip · label ai-processed"]
+    classify["Save inbound conversation<br/>Classify topic, language, handoff signals"]
+    early{"Attachment or<br/>human support required?"}
+    draft["Read approved knowledge sections<br/>Draft structured answer + extract issue facts"]
+    check{"Python rules allow an answer?<br/>Enough knowledge · permitted next step<br/>No fulfillment promise"}
+    reply["Send the answer<br/>Ticket: answered"]
+    human["Send acknowledgement<br/>Ticket: escalated · label needs-human<br/>Record proposed action when available"]
+    done(["Save outbound message + result<br/>Event: processed · label ai-processed"])
+    failure["Any processing error:<br/>event failed + incremented attempt record<br/>eligible for a later polling retry"]
+    cap["After 3 failed attempts:<br/>label ai-processed<br/>keep failure visible for investigation"]
+
+    inbox --> claim --> guards
+    guards -->|"Yes"| skipped
+    guards -->|"No"| classify --> early
+    early -->|"Yes"| human
+    early -->|"No"| draft --> check
+    check -->|"Yes"| reply --> done
+    check -->|"No"| human --> done
+    claim -. "failure path" .-> failure --> cap
+
+    classDef good fill:#e8f1df,stroke:#9bb686,color:#35532f,rx:9,ry:9;
+    classDef caution fill:#faf0db,stroke:#c3a76f,color:#705326,rx:9,ry:9;
+    classDef normal fill:#ffffff,stroke:#c6d3bf,color:#304436,rx:8,ry:8;
+    classDef dark fill:#254e3c,stroke:#254e3c,color:#f7f9f0;
+    class inbox,done dark;
+    class draft,reply good;
+    class human,failure,cap caution;
+    class claim,guards,skipped,classify,early,check normal;
